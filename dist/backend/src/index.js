@@ -10,6 +10,7 @@ const database_1 = require("./middleware/database");
 const person_2 = require("./routers/person");
 require("reflect-metadata");
 const tag_2 = require("./routers/tag");
+const search_1 = require("./routers/search");
 async function startApp() {
     const app = express();
     app.use(express.json());
@@ -28,6 +29,7 @@ async function startApp() {
     app.use(database_1.setDB(connection));
     app.use('/person', person_2.PersonRouter);
     app.use('/tag', tag_2.TagRouter);
+    app.use('/search', search_1.SearchRouter);
     app.listen(process.env.HTTP_PORT, () => console.log('Server started on port ' + process.env.HTTP_PORT));
 }
 dotenv_1.config();

@@ -13,6 +13,20 @@ export async function putPersonRelation(
   };
 
   const personRepo = request.db.getRepository(Person);
+
+  // TODO
+  // We need to check if some relation already exists between them
+  // If so, need to update the tag, not the entire thing
+  const sourceFromDB = await personRepo.findOne({
+    id: source.id,
+  });
+  if (!sourceFromDB) {
+    response.status(404).json({
+      message: 'Person not found.',
+    });
+    return;
+  }
+
   const updatedSourcePerson = new Person(source.name).composeWithID(
     source.id,
     source.name,

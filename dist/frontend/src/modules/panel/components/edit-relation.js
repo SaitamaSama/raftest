@@ -6,35 +6,52 @@ const lab_1 = require("@material-ui/lab");
 const React = require("react");
 const panel_1 = require("../../common/components/panel");
 const config = require("../../../config.json");
-async function save(selectedSource, destinationSource, tag) {
+const notistack_1 = require("notistack");
+async function save(enqueueSnackbar, selectedSource, selectedDestination, tag, clear) {
+    if (!selectedSource || !selectedDestination || !tag) {
+        enqueueSnackbar('All of the fields are required.');
+        return;
+    }
+    if (selectedSource.id === selectedDestination.id) {
+        enqueueSnackbar('Source and destination cannot be the same.');
+        return;
+    }
     try {
-        const request = await fetch(`${config.API_HOST}/person`, {
+        await fetch(`${config.API_HOST}/person`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 source: selectedSource,
-                destination: destinationSource,
+                destination: selectedDestination,
                 tag,
             }),
         });
+        clear();
+        enqueueSnackbar(`Successfully related ${selectedSource.name} and ${selectedDestination.name}`);
     }
     catch (error) {
         console.error(error);
+        enqueueSnackbar(`Error: ${JSON.stringify(error)}`, {
+            variant: 'error',
+        });
     }
 }
 const EditRelation = ({ people, tags, }) => {
     const [selectedPersonSrc, setSelectedPersonSrc] = React.useState();
     const [selectedPersonDest, setSelectedPersonDest] = React.useState();
     const [selectedTag, setSelectedTag] = React.useState();
+    const { enqueueSnackbar, closeSnackbar } = notistack_1.useSnackbar();
     return (React.createElement(panel_1.Panel, null,
         React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Edit relation"),
         React.createElement("form", { onSubmit: ev => {
                 ev.preventDefault();
-                if (!selectedPersonDest || !selectedPersonSrc || !selectedTag)
-                    return;
-                save(selectedPersonSrc, selectedPersonDest, selectedTag);
+                save(enqueueSnackbar, selectedPersonSrc, selectedPersonDest, selectedTag, () => {
+                    setSelectedTag(undefined);
+                    setSelectedPersonSrc(undefined);
+                    setSelectedPersonDest(undefined);
+                });
             } },
             React.createElement("section", { className: "flex" },
                 React.createElement(lab_1.Autocomplete, { options: people, getOptionLabel: option => option.name, value: selectedPersonSrc, onChange: (_, person) => person && setSelectedPersonSrc(person), style: { width: '35%' }, renderInput: params => (React.createElement(core_1.TextField, Object.assign({}, params, { variant: "filled", label: "Person to be tagged from", placeholder: "Relate them", fullWidth: true, size: "small" }))) }),

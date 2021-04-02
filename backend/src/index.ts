@@ -9,6 +9,7 @@ import { setDB } from './middleware/database';
 import { PersonRouter } from './routers/person';
 import 'reflect-metadata';
 import { TagRouter } from './routers/tag';
+import { SearchRouter } from './routers/search';
 
 async function startApp(): Promise<void> {
   const app = express();
@@ -30,6 +31,7 @@ async function startApp(): Promise<void> {
 
   app.use('/person', PersonRouter);
   app.use('/tag', TagRouter);
+  app.use('/search', SearchRouter);
 
   app.listen(process.env.HTTP_PORT, () =>
     console.log('Server started on port ' + process.env.HTTP_PORT),

@@ -5,31 +5,50 @@ import { Person } from '../../../../../backend/src/entities/person';
 import { Tag } from '../../../../../backend/src/entities/tag';
 import { Panel } from '../../common/components/panel';
 import * as config from '../../../config.json';
+import { useSnackbar } from 'notistack';
 
 export interface EditRelationProps {
   people: Array<Person>;
   tags: Array<Tag>;
+  refresh: () => unknown;
 }
 
 async function save(
-  selectedSource: Person,
-  destinationSource: Person,
-  tag: Tag,
+  enqueueSnackbar: Function,
+  selectedSource: Person | undefined,
+  selectedDestination: Person | undefined,
+  tag: Tag | undefined,
+  clear: () => void,
 ): Promise<void> {
+  if (!selectedSource || !selectedDestination || !tag) {
+    enqueueSnackbar('All of the fields are required.');
+    return;
+  }
+  if (selectedSource.id === selectedDestination.id) {
+    enqueueSnackbar('Source and destination cannot be the same.');
+    return;
+  }
   try {
-    const request = await fetch(`${config.API_HOST}/person`, {
+    await fetch(`${config.API_HOST}/person`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         source: selectedSource,
-        destination: destinationSource,
+        destination: selectedDestination,
         tag,
       }),
     });
+    clear();
+    enqueueSnackbar(
+      `Successfully related ${selectedSource.name} and ${selectedDestination.name}`,
+    );
   } catch (error) {
     console.error(error);
+    enqueueSnackbar(`Error: ${JSON.stringify(error)}`, {
+      variant: 'error',
+    });
   }
 }
 
@@ -40,6 +59,9 @@ export const EditRelation: React.FC<EditRelationProps> = ({
   const [selectedPersonSrc, setSelectedPersonSrc] = React.useState<Person>();
   const [selectedPersonDest, setSelectedPersonDest] = React.useState<Person>();
   const [selectedTag, setSelectedTag] = React.useState<Tag>();
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   return (
     <Panel>
       <Typography variant="h4" gutterBottom>
@@ -48,8 +70,17 @@ export const EditRelation: React.FC<EditRelationProps> = ({
       <form
         onSubmit={ev => {
           ev.preventDefault();
-          if (!selectedPersonDest || !selectedPersonSrc || !selectedTag) return;
-          save(selectedPersonSrc, selectedPersonDest, selectedTag);
+          save(
+            enqueueSnackbar,
+            selectedPersonSrc,
+            selectedPersonDest,
+            selectedTag,
+            () => {
+              setSelectedTag(undefined);
+              setSelectedPersonSrc(undefined);
+              setSelectedPersonDest(undefined);
+            },
+          );
         }}
       >
         <section className="flex">
