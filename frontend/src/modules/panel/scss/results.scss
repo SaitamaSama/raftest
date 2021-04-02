@@ -1,0 +1,16 @@
+.results-panel {
+  border-radius: 0 0 5px 5px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+
+  .no-results-info {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .relation-stepper {
+    margin: 0.75rem 0;
+    border-radius: 5px;
+  }
+}

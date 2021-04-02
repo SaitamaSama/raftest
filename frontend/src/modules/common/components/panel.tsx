@@ -1,12 +1,13 @@
-import { Paper } from '@material-ui/core';
+import { Paper, PaperProps } from '@material-ui/core';
 import * as React from 'react';
 import '../scss/panel.scss';
 
-export const Panel: React.FC<Record<string, unknown>> = ({
+export const Panel: React.FC<PaperProps> = ({
   children,
+  ...props
 }): JSX.Element => {
   return (
-    <Paper className="panel" elevation={8}>
+    <Paper elevation={8} {...props} className={`panel ${props.className}`}>
       {children}
     </Paper>
   );

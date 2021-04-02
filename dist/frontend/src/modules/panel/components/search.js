@@ -8,6 +8,7 @@ const React = require("react");
 const panel_1 = require("../../common/components/panel");
 const results_1 = require("./results");
 const config = require("../../../config.json");
+require("../scss/search.scss");
 async function search(source, to, enqueueSnackbar, setResults) {
     if (!source || !to) {
         enqueueSnackbar('Both fields are required to search.');
@@ -29,6 +30,12 @@ async function search(source, to, enqueueSnackbar, setResults) {
             },
         });
         const response = await request.json();
+        if (response.results.length === 0) {
+            enqueueSnackbar('No relation found betwen the selected people.', {
+                variant: 'error',
+            });
+        }
+        setResults(response.results);
     }
     catch (error) {
         console.error(error);
@@ -37,10 +44,10 @@ async function search(source, to, enqueueSnackbar, setResults) {
 const Search = ({ people }) => {
     const [selectedPersonSrc, setSelectedPersonSrc] = React.useState();
     const [selectedPersonDest, setSelectedPersonDest] = React.useState();
-    const [results, setResults] = React.useState();
+    const [results, setResults] = React.useState([]);
     const { enqueueSnackbar, closeSnackbar } = notistack_1.useSnackbar();
     return (React.createElement(React.Fragment, null,
-        React.createElement(panel_1.Panel, null,
+        React.createElement(panel_1.Panel, { className: "search-panel" },
             React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Seach for links"),
             React.createElement("form", { className: "flex", onSubmit: ev => {
                     ev.preventDefault();
@@ -51,8 +58,8 @@ const Search = ({ people }) => {
                     React.createElement(core_1.Typography, { variant: "body2" }, "and")),
                 React.createElement(lab_1.Autocomplete, { options: people, getOptionLabel: option => option.name, value: selectedPersonDest, onChange: (_, person) => person && setSelectedPersonDest(person), style: { width: '35%' }, renderInput: params => (React.createElement(core_1.TextField, Object.assign({}, params, { variant: "filled", label: "Person to be tagged to", placeholder: "Relate them", fullWidth: true, size: "small" }))) }),
                 React.createElement("section", { className: "flex a-bottom", style: { marginLeft: '1rem' } },
-                    React.createElement(core_1.Button, { variant: "contained", color: "secondary" }, "Search")))),
-        results && React.createElement(results_1.Results, null)));
+                    React.createElement(core_1.Button, { variant: "contained", color: "secondary", type: "submit" }, "Search")))),
+        results && React.createElement(results_1.Results, { results: results, people: people })));
 };
 exports.Search = Search;
 //# sourceMappingURL=search.js.map

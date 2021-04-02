@@ -10,6 +10,8 @@ import { addPerson, addTag } from '../util/store-manager';
 import * as config from '../../../config.json';
 import { Lists } from '../../list/components/lists';
 import { Search } from '../../panel/components/search';
+import { NetworkChart } from '../../chart/components/network';
+import { Info } from '../../panel/components/info';
 
 export interface Store {
   people: Array<Person>;
@@ -42,9 +44,11 @@ export const Root: React.FC<Record<string, unknown>> = (): JSX.Element => {
         <AddPerson store={people} addPerson={addPerson(setPeople)} />
         <AddTag store={tags} addTag={addTag(setTags)} />
         <EditRelation people={people} tags={tags} refresh={() => fetchData()} />
+        <Lists people={people} tags={tags} />
+        <Info />
       </section>
       <section>
-        <Lists people={people} tags={tags} />
+        <NetworkChart people={people} />
         <Search people={people} />
       </section>
     </section>

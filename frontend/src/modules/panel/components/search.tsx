@@ -6,6 +6,8 @@ import { Person } from '../../../../../backend/src/entities/person';
 import { Panel } from '../../common/components/panel';
 import { Results } from './results';
 import * as config from '../../../config.json';
+import { Result } from '../../../../../backend/src/routers/search/graph';
+import '../scss/search.scss';
 
 export interface SearchProps {
   people: Array<Person>;
@@ -15,7 +17,7 @@ async function search(
   source: Person | undefined,
   to: Person | undefined,
   enqueueSnackbar: Function,
-  setResults: React.Dispatch<any>,
+  setResults: React.Dispatch<Array<Result>>,
 ): Promise<void> {
   if (!source || !to) {
     enqueueSnackbar('Both fields are required to search.');
@@ -37,6 +39,13 @@ async function search(
       },
     });
     const response = await request.json();
+    if (response.results.length === 0) {
+      enqueueSnackbar('No relation found betwen the selected people.', {
+        variant: 'error',
+      });
+    }
+
+    setResults(response.results);
   } catch (error) {
     console.error(error);
   }
@@ -45,13 +54,13 @@ async function search(
 export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
   const [selectedPersonSrc, setSelectedPersonSrc] = React.useState<Person>();
   const [selectedPersonDest, setSelectedPersonDest] = React.useState<Person>();
-  const [results, setResults] = React.useState<any>();
+  const [results, setResults] = React.useState<Array<Result>>([]);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   return (
     <>
-      <Panel>
+      <Panel className="search-panel">
         <Typography variant="h4" gutterBottom>
           Seach for links
         </Typography>
@@ -105,13 +114,13 @@ export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
             )}
           />
           <section className="flex a-bottom" style={{ marginLeft: '1rem' }}>
-            <Button variant="contained" color="secondary">
+            <Button variant="contained" color="secondary" type="submit">
               Search
             </Button>
           </section>
         </form>
       </Panel>
-      {results && <Results />}
+      {results && <Results results={results} people={people} />}
     </>
   );
 };

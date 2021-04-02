@@ -55,6 +55,7 @@ async function save(
 export const EditRelation: React.FC<EditRelationProps> = ({
   people,
   tags,
+  refresh,
 }): JSX.Element => {
   const [selectedPersonSrc, setSelectedPersonSrc] = React.useState<Person>();
   const [selectedPersonDest, setSelectedPersonDest] = React.useState<Person>();
@@ -76,9 +77,7 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             selectedPersonDest,
             selectedTag,
             () => {
-              setSelectedTag(undefined);
-              setSelectedPersonSrc(undefined);
-              setSelectedPersonDest(undefined);
+              refresh();
             },
           );
         }}
@@ -90,6 +89,7 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             value={selectedPersonSrc}
             onChange={(_, person) => person && setSelectedPersonSrc(person)}
             style={{ width: '35%' }}
+            selectOnFocus
             renderInput={params => (
               <TextField
                 {...params}
@@ -110,6 +110,7 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             value={selectedPersonDest}
             onChange={(_, person) => person && setSelectedPersonDest(person)}
             style={{ width: '35%' }}
+            selectOnFocus
             renderInput={params => (
               <TextField
                 {...params}
@@ -128,6 +129,7 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             getOptionLabel={option => option.value}
             value={selectedTag}
             style={{ width: '35%' }}
+            selectOnFocus
             onChange={(_, tag) => tag && setSelectedTag(tag)}
             renderInput={params => (
               <TextField
