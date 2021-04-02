@@ -1,0 +1,7 @@
+.lists-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  & > * {
+    margin: 0 0.25rem 0.5rem 0.25rem;
+  }
+}
