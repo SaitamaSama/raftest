@@ -7,6 +7,7 @@ const notistack_1 = require("notistack");
 const React = require("react");
 const panel_1 = require("../../common/components/panel");
 const config = require("../../../config.json");
+const panel_info_1 = require("../../common/components/panel-info");
 async function save(tags, selectedTag, newName, setDisabled, enqueueSnackbar, closeSnackbar, editTags, clear) {
     if (!selectedTag) {
         enqueueSnackbar('Select a tag to edit');
@@ -37,6 +38,7 @@ async function save(tags, selectedTag, newName, setDisabled, enqueueSnackbar, cl
         });
         const response = await request.json();
         editTags(tags, response.tag);
+        clear();
     }
     catch (error) {
         enqueueSnackbar(`Error: ${JSON.stringify(error)}`, {
@@ -55,7 +57,9 @@ const EditTag = ({ tags, editTags, }) => {
     const [newTagName, setNewTagName] = React.useState('');
     const { enqueueSnackbar, closeSnackbar } = notistack_1.useSnackbar();
     return (React.createElement(panel_1.Panel, null,
-        React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Edit tag"),
+        React.createElement("section", { className: "header" },
+            React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Edit tag"),
+            React.createElement(panel_info_1.PanelInfo, { info: "Edit previously created tags here" })),
         React.createElement("form", { className: "flex", onSubmit: ev => {
                 ev.preventDefault();
                 save(tags, selectedTag, newTagName, setDisabled, enqueueSnackbar, closeSnackbar, editTags, () => {
@@ -66,10 +70,10 @@ const EditTag = ({ tags, editTags, }) => {
             } },
             React.createElement(lab_1.Autocomplete, { options: tags, getOptionLabel: option => option.value, value: selectedTag, inputValue: selectedTagText, onInputChange: (_, value) => setSelectedTagText(value), style: { width: '35%', flexGrow: 1 }, selectOnFocus: true, onChange: (_, tag) => tag && setSelectedTag(tag), renderInput: params => (React.createElement(core_1.TextField, Object.assign({}, params, { variant: "filled", label: "Tag", placeholder: "Relation between the people", fullWidth: true, size: "small" }))), disabled: disabled }),
             React.createElement("div", { className: "grow" }),
-            React.createElement(core_1.TextField, { value: newTagName, onChange: ev => setNewTagName(ev.target.value), variant: "filled", size: "small", label: "New tag name", className: "grow" }),
+            React.createElement(core_1.TextField, { value: newTagName, onChange: ev => setNewTagName(ev.target.value), variant: "filled", size: "small", label: "New tag name", className: "grow", disabled: disabled }),
             React.createElement("div", { className: "grow" }),
             React.createElement("section", { className: "flex a-bottom" },
-                React.createElement(core_1.Button, { type: "submit", variant: "contained", color: "secondary" }, "Save")))));
+                React.createElement(core_1.Button, { type: "submit", variant: "contained", color: "secondary", disabled: disabled }, "Save")))));
 };
 exports.EditTag = EditTag;
 //# sourceMappingURL=edit-tag.js.map

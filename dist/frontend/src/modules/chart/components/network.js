@@ -31,7 +31,10 @@ const NetworkChart = ({ people, }) => {
     };
     return (React.createElement(core_1.Paper, null,
         React.createElement(core_1.Typography, { variant: "h4", style: { padding: '1rem' } }, "Graph view"),
-        React.createElement("section", { style: { background: '#272B4D', borderRadius: '0 0 5px 5px' } },
+        React.createElement("section", { style: {
+                background: 'linear-gradient(to top, #cb356b, #bd3f32)',
+                borderRadius: '0 0 5px 5px',
+            } },
             React.createElement(react_d3_graph_1.Graph, { id: "people", data: data, config: {
                     node: {
                         color: '#26DEB0',

@@ -7,6 +7,7 @@ const React = require("react");
 const panel_1 = require("../../common/components/panel");
 const config = require("../../../config.json");
 const notistack_1 = require("notistack");
+const panel_info_1 = require("../../common/components/panel-info");
 async function save(enqueueSnackbar, selectedSource, selectedDestination, tag, clear, closeSnackbar, setDisabled) {
     if (!selectedSource || !selectedDestination || !tag) {
         enqueueSnackbar('All of the fields are required.');
@@ -60,7 +61,9 @@ const EditRelation = ({ people, tags, refresh, }) => {
     const [disabled, setDisabled] = React.useState(false);
     const { enqueueSnackbar, closeSnackbar } = notistack_1.useSnackbar();
     return (React.createElement(panel_1.Panel, null,
-        React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Edit relation"),
+        React.createElement("section", { className: "header" },
+            React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Edit relation"),
+            React.createElement(panel_info_1.PanelInfo, { info: "Link two people with a relation tag. If a relation already exists, it will be overwritten upon saving." })),
         React.createElement("form", { onSubmit: ev => {
                 ev.preventDefault();
                 save(enqueueSnackbar, selectedPersonSrc, selectedPersonDest, selectedTag, () => {

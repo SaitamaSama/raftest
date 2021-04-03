@@ -9,6 +9,7 @@ module.exports = {
   output: {
     filename: 'app.bundle.js',
     chunkFilename: 'chunk-[name].bundle.js',
+    path: path.resolve(__dirname, 'ui-dist'),
   },
   plugins: [
     new HtmlWebpackPlugin({

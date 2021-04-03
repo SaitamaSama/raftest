@@ -6,6 +6,7 @@ const React = require("react");
 const panel_1 = require("../../common/components/panel");
 const config = require("../../../config.json");
 const notistack_1 = require("notistack");
+const panel_info_1 = require("../../common/components/panel-info");
 async function save(tag, setTag, store, addTag, enqueueSnackbar, closeSnackbar, setDisabled) {
     if (tag.trim().length === 0) {
         enqueueSnackbar('Tag cannot be empty');
@@ -46,7 +47,9 @@ const AddTag = ({ store, addTag, }) => {
     const [disabled, setDisabled] = React.useState(false);
     const { enqueueSnackbar, closeSnackbar } = notistack_1.useSnackbar();
     return (React.createElement(panel_1.Panel, null,
-        React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Add tag"),
+        React.createElement("section", { className: "header" },
+            React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Add tag"),
+            React.createElement(panel_info_1.PanelInfo, { info: "Add relations that can be used to relate people." })),
         React.createElement("form", { className: "flex", onSubmit: ev => {
                 ev.preventDefault();
                 save(tag, setTag, store, addTag, enqueueSnackbar, closeSnackbar, setDisabled);

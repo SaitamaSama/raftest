@@ -9,6 +9,7 @@ const panel_1 = require("../../common/components/panel");
 const results_1 = require("./results");
 const config = require("../../../config.json");
 require("../scss/search.scss");
+const panel_info_1 = require("../../common/components/panel-info");
 async function search(source, to, enqueueSnackbar, closeSnackbar, setResults, setDisabled) {
     if (!source || !to) {
         enqueueSnackbar('Both fields are required to search.');
@@ -63,7 +64,9 @@ const Search = ({ people }) => {
     const { enqueueSnackbar, closeSnackbar } = notistack_1.useSnackbar();
     return (React.createElement(React.Fragment, null,
         React.createElement(panel_1.Panel, { className: "search-panel" },
-            React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Seach for links"),
+            React.createElement("section", { className: "header" },
+                React.createElement(core_1.Typography, { variant: "h4", gutterBottom: true }, "Seach for links"),
+                React.createElement(panel_info_1.PanelInfo, { info: "Search for degree of separation between two people" })),
             React.createElement("form", { className: "flex", onSubmit: ev => {
                     ev.preventDefault();
                     search(selectedPersonSrc, selectedPersonDest, enqueueSnackbar, closeSnackbar, setResults, setDisabled);
