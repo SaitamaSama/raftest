@@ -11,3 +11,11 @@ To scale the application, there are a couple of changes I would make:
 2. Instead of relying on application level graphs, I would store the data points in a Graph DB, for which AWS provides Neptune.
 
 ![screenshot](app-screenshot.png)
+
+## How to deploy
+
+1. Clone the repo
+2. Install deps `npm i`
+3. Build `npx tsc && npx webpack`
+4. Launch server by `make server`
+5. Launch UI by `make ui`
