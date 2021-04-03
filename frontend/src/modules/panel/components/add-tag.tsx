@@ -10,6 +10,7 @@ import { Panel } from '../../common/components/panel';
 import { DispatchedAction } from '../../root/util/store-manager';
 import * as config from '../../../config.json';
 import { useSnackbar } from 'notistack';
+import { PanelInfo } from '../../common/components/panel-info';
 
 export interface AddTagProps {
   store: Array<Tag>;
@@ -69,9 +70,12 @@ export const AddTag: React.FC<AddTagProps> = ({
 
   return (
     <Panel>
-      <Typography variant="h4" gutterBottom>
-        Add tag
-      </Typography>
+      <section className="header">
+        <Typography variant="h4" gutterBottom>
+          Add tag
+        </Typography>
+        <PanelInfo info="Add relations that can be used to relate people." />
+      </section>
       <form
         className="flex"
         onSubmit={ev => {
@@ -95,11 +99,13 @@ export const AddTag: React.FC<AddTagProps> = ({
           value={tag}
           onChange={ev => setTag(ev.target.value)}
           disabled={disabled}
+          fullWidth
+          className="grow"
         />
         <div className="grow" />
         <section className="flex a-bottom">
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             type="submit"
             disabled={disabled}

@@ -15,6 +15,10 @@ let Tag = class Tag {
     constructor(value) {
         this.value = value;
     }
+    composeWithID(id) {
+        this.id = id;
+        return this;
+    }
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn({ name: 'id' }),

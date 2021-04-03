@@ -1,4 +1,13 @@
 .panel {
   padding: 1rem;
   margin-bottom: 1rem;
+
+  .header {
+    display: flex;
+    align-items: center;
+
+    .info-container {
+      margin-left: 1rem;
+    }
+  }
 }

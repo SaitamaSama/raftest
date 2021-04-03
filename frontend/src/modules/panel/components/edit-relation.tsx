@@ -6,6 +6,7 @@ import { Tag } from '../../../../../backend/src/entities/tag';
 import { Panel } from '../../common/components/panel';
 import * as config from '../../../config.json';
 import { useSnackbar } from 'notistack';
+import { PanelInfo } from '../../common/components/panel-info';
 
 export interface EditRelationProps {
   people: Array<Person>;
@@ -82,9 +83,12 @@ export const EditRelation: React.FC<EditRelationProps> = ({
 
   return (
     <Panel>
-      <Typography variant="h4" gutterBottom>
-        Edit relation
-      </Typography>
+      <section className="header">
+        <Typography variant="h4" gutterBottom>
+          Edit relation
+        </Typography>
+        <PanelInfo info="Link two people with a relation tag. If a relation already exists, it will be overwritten upon saving." />
+      </section>
       <form
         onSubmit={ev => {
           ev.preventDefault();

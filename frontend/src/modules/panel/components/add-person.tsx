@@ -5,6 +5,7 @@ import { DispatchedAction } from '../../root/util/store-manager';
 import * as config from '../../../config.json';
 import { Person } from '../../../../../backend/src/entities/person';
 import { useSnackbar } from 'notistack';
+import { PanelInfo } from '../../common/components/panel-info';
 
 export interface AddPersonProps {
   store: Array<Person>;
@@ -66,9 +67,12 @@ export const AddPerson: React.FC<AddPersonProps> = ({
 
   return (
     <Panel>
-      <Typography variant="h4" gutterBottom>
-        Add person
-      </Typography>
+      <section className="header">
+        <Typography variant="h4" gutterBottom>
+          Add person
+        </Typography>
+        <PanelInfo info="Add a person to relate and search" />
+      </section>
       <form
         className="flex"
         onSubmit={ev => {
@@ -96,7 +100,7 @@ export const AddPerson: React.FC<AddPersonProps> = ({
         <div className="grow" />
         <section className="flex a-bottom">
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             type="submit"
             disabled={disabled}

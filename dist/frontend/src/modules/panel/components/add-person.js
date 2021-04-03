@@ -56,7 +56,7 @@ const AddPerson = ({ store, addPerson, }) => {
             React.createElement(core_1.TextField, { label: "Name", variant: "filled", size: "small", style: { width: '35%' }, value: name, onChange: ev => setName(ev.target.value), disabled: disabled }),
             React.createElement("div", { className: "grow" }),
             React.createElement("section", { className: "flex a-bottom" },
-                React.createElement(core_1.Button, { variant: "outlined", color: "primary", type: "submit", disabled: disabled }, "Save")))));
+                React.createElement(core_1.Button, { variant: "contained", color: "primary", type: "submit", disabled: disabled }, "Save")))));
 };
 exports.AddPerson = AddPerson;
 //# sourceMappingURL=add-person.js.map

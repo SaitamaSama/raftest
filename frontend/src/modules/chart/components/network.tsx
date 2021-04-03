@@ -39,7 +39,12 @@ export const NetworkChart: React.FC<NetworkChartProps> = ({
       <Typography variant="h4" style={{ padding: '1rem' }}>
         Graph view
       </Typography>
-      <section style={{ background: '#272B4D', borderRadius: '0 0 5px 5px' }}>
+      <section
+        style={{
+          background: 'linear-gradient(to top, #cb356b, #bd3f32)',
+          borderRadius: '0 0 5px 5px',
+        }}
+      >
         <Graph
           id="people"
           data={data}

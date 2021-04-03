@@ -19,3 +19,13 @@ export function addTag(
     setStore([...store, tag]);
   };
 }
+
+export function editTag(
+  setTags: Dispatch<SetStateAction<Array<Tag>>>,
+): DispatchedAction<Array<Tag>, Tag> {
+  return (tags: Array<Tag>, tag: Tag) => {
+    const index = tags.findIndex(t => t.id === t.id);
+    tags[index] = tag;
+    setTags(tags);
+  };
+}

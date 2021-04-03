@@ -6,6 +6,11 @@ export class Tag {
     this.value = value;
   }
 
+  public composeWithID(id: number): Tag {
+    this.id = id;
+    return this;
+  }
+
   @PrimaryGeneratedColumn({ name: 'id' })
   public id!: number;
 

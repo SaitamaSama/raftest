@@ -6,12 +6,13 @@ import '../scss/root.scss';
 import '../scss/base.scss';
 import { Person } from '../../../../../backend/src/entities/person';
 import { Tag } from '../../../../../backend/src/entities/tag';
-import { addPerson, addTag } from '../util/store-manager';
+import { addPerson, addTag, editTag } from '../util/store-manager';
 import * as config from '../../../config.json';
 import { Lists } from '../../list/components/lists';
 import { Search } from '../../panel/components/search';
 import { NetworkChart } from '../../chart/components/network';
 import { Info } from '../../panel/components/info';
+import { EditTag } from '../../panel/components/edit-tag';
 
 export interface Store {
   people: Array<Person>;
@@ -42,7 +43,10 @@ export const Root: React.FC<Record<string, unknown>> = (): JSX.Element => {
     <section className="root">
       <section style={{ marginRight: '1rem' }}>
         <AddPerson store={people} addPerson={addPerson(setPeople)} />
-        <AddTag store={tags} addTag={addTag(setTags)} />
+        <section className="tag-space">
+          <AddTag store={tags} addTag={addTag(setTags)} />
+          <EditTag tags={tags} editTags={editTag(setTags)} />
+        </section>
         <EditRelation people={people} tags={tags} refresh={() => fetchData()} />
         <Lists people={people} tags={tags} />
         <Info />

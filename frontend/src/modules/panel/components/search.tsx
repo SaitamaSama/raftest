@@ -8,6 +8,7 @@ import { Results } from './results';
 import * as config from '../../../config.json';
 import { Result } from '../../../../../backend/src/routers/search/graph';
 import '../scss/search.scss';
+import { PanelInfo } from '../../common/components/panel-info';
 
 export interface SearchProps {
   people: Array<Person>;
@@ -77,9 +78,12 @@ export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
   return (
     <>
       <Panel className="search-panel">
-        <Typography variant="h4" gutterBottom>
-          Seach for links
-        </Typography>
+        <section className="header">
+          <Typography variant="h4" gutterBottom>
+            Seach for links
+          </Typography>
+          <PanelInfo info="Search for degree of separation between two people" />
+        </section>
         <form
           className="flex"
           onSubmit={ev => {

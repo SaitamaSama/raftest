@@ -1,6 +1,35 @@
 import { Request, Response } from 'express';
+import { Repository } from 'typeorm';
 import { Person } from '../../entities/person';
 import { Tag } from '../../entities/tag';
+
+async function editRelation(
+  personRepo: Repository<Person>,
+  source: Person,
+  destination: Person,
+  tag: Tag,
+  srcRelatedIndex: number,
+  destRelatedIndex: number,
+) {
+  source.tags[srcRelatedIndex] = tag.id;
+  destination.tags[destRelatedIndex] = tag.id;
+  await personRepo.save(
+    new Person(source.name).composeWithID(
+      source.id,
+      source.name,
+      source.tags,
+      source.related,
+    ),
+  );
+  await personRepo.save(
+    new Person(destination.name).composeWithID(
+      destination.id,
+      destination.name,
+      destination.tags,
+      destination.related,
+    ),
+  );
+}
 
 export async function putPersonRelation(
   request: Request,
@@ -20,10 +49,30 @@ export async function putPersonRelation(
   const sourceFromDB = await personRepo.findOne({
     id: source.id,
   });
-  if (!sourceFromDB) {
+  const destinationFromDB = await personRepo.findOne({
+    id: destination.id,
+  });
+  if (!sourceFromDB || !destinationFromDB) {
     response.status(404).json({
       message: 'Person not found.',
     });
+    return;
+  }
+
+  const srcRelatedIndex = sourceFromDB.related.indexOf(destination.id);
+  const destRelatedIndex = destinationFromDB.related.indexOf(source.id);
+  if (srcRelatedIndex !== -1 || destRelatedIndex !== -1) {
+    // Then the relation exists
+    await editRelation(
+      personRepo,
+      sourceFromDB,
+      destinationFromDB,
+      tag,
+      srcRelatedIndex,
+      destRelatedIndex,
+    );
+    response.status(204).json({ success: true });
+
     return;
   }
 
