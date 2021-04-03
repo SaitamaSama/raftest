@@ -19,6 +19,8 @@ async function save(
   selectedDestination: Person | undefined,
   tag: Tag | undefined,
   clear: () => void,
+  closeSnackbar: Function,
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> {
   if (!selectedSource || !selectedDestination || !tag) {
     enqueueSnackbar('All of the fields are required.');
@@ -28,7 +30,15 @@ async function save(
     enqueueSnackbar('Source and destination cannot be the same.');
     return;
   }
+  const saveSnackBar = enqueueSnackbar('Saving...', {
+    persist: true,
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'center',
+    },
+  });
   try {
+    setDisabled(true);
     await fetch(`${config.API_HOST}/person`, {
       method: 'PUT',
       headers: {
@@ -49,6 +59,9 @@ async function save(
     enqueueSnackbar(`Error: ${JSON.stringify(error)}`, {
       variant: 'error',
     });
+  } finally {
+    closeSnackbar(saveSnackBar);
+    setDisabled(false);
   }
 }
 
@@ -60,6 +73,10 @@ export const EditRelation: React.FC<EditRelationProps> = ({
   const [selectedPersonSrc, setSelectedPersonSrc] = React.useState<Person>();
   const [selectedPersonDest, setSelectedPersonDest] = React.useState<Person>();
   const [selectedTag, setSelectedTag] = React.useState<Tag>();
+  const [sourceTextInput, setSourceTextInput] = React.useState<string>('');
+  const [destTextInput, setDestTextInput] = React.useState<string>('');
+  const [tagTextInput, setTagTextInput] = React.useState<string>('');
+  const [disabled, setDisabled] = React.useState<boolean>(false);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -77,8 +94,16 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             selectedPersonDest,
             selectedTag,
             () => {
+              setSelectedPersonSrc(undefined);
+              setSelectedPersonDest(undefined);
+              setSelectedTag(undefined);
+              setSourceTextInput('');
+              setDestTextInput('');
+              setTagTextInput('');
               refresh();
             },
+            closeSnackbar,
+            setDisabled,
           );
         }}
       >
@@ -87,6 +112,8 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             options={people}
             getOptionLabel={option => option.name}
             value={selectedPersonSrc}
+            inputValue={sourceTextInput}
+            onInputChange={(_, value) => setSourceTextInput(value)}
             onChange={(_, person) => person && setSelectedPersonSrc(person)}
             style={{ width: '35%' }}
             selectOnFocus
@@ -100,6 +127,7 @@ export const EditRelation: React.FC<EditRelationProps> = ({
                 size="small"
               />
             )}
+            disabled={disabled}
           />
           <section className="grow flex center">
             <Typography variant="body2">and</Typography>
@@ -108,6 +136,8 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             options={people}
             getOptionLabel={option => option.name}
             value={selectedPersonDest}
+            inputValue={destTextInput}
+            onInputChange={(_, value) => setDestTextInput(value)}
             onChange={(_, person) => person && setSelectedPersonDest(person)}
             style={{ width: '35%' }}
             selectOnFocus
@@ -121,6 +151,7 @@ export const EditRelation: React.FC<EditRelationProps> = ({
                 size="small"
               />
             )}
+            disabled={disabled}
           />
         </section>
         <section className="flex gap-top">
@@ -128,6 +159,8 @@ export const EditRelation: React.FC<EditRelationProps> = ({
             options={tags}
             getOptionLabel={option => option.value}
             value={selectedTag}
+            inputValue={tagTextInput}
+            onInputChange={(_, value) => setTagTextInput(value)}
             style={{ width: '35%' }}
             selectOnFocus
             onChange={(_, tag) => tag && setSelectedTag(tag)}
@@ -141,10 +174,16 @@ export const EditRelation: React.FC<EditRelationProps> = ({
                 size="small"
               />
             )}
+            disabled={disabled}
           />
           <div className="grow" />
           <section className="flex a-bottom">
-            <Button variant="contained" color="primary" type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={disabled}
+            >
               Save
             </Button>
           </section>

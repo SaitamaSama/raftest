@@ -17,7 +17,9 @@ async function search(
   source: Person | undefined,
   to: Person | undefined,
   enqueueSnackbar: Function,
+  closeSnackbar: Function,
   setResults: React.Dispatch<Array<Result>>,
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> {
   if (!source || !to) {
     enqueueSnackbar('Both fields are required to search.');
@@ -27,7 +29,15 @@ async function search(
     enqueueSnackbar('They are the same person.');
     return;
   }
+  const searchSnackBar = enqueueSnackbar('Searching...', {
+    persist: true,
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'center',
+    },
+  });
   try {
+    setDisabled(true);
     const request = await fetch(`${config.API_HOST}/search`, {
       method: 'POST',
       body: JSON.stringify({
@@ -48,12 +58,18 @@ async function search(
     setResults(response.results);
   } catch (error) {
     console.error(error);
+  } finally {
+    setDisabled(false);
+    closeSnackbar(searchSnackBar);
   }
 }
 
 export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
   const [selectedPersonSrc, setSelectedPersonSrc] = React.useState<Person>();
   const [selectedPersonDest, setSelectedPersonDest] = React.useState<Person>();
+  const [sourcePersonText, setSourcePersonText] = React.useState<string>('');
+  const [destPersonText, setDestPersonText] = React.useState<string>('');
+  const [disabled, setDisabled] = React.useState<boolean>(false);
   const [results, setResults] = React.useState<Array<Result>>([]);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -72,7 +88,9 @@ export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
               selectedPersonSrc,
               selectedPersonDest,
               enqueueSnackbar,
+              closeSnackbar,
               setResults,
+              setDisabled,
             );
           }}
         >
@@ -80,6 +98,8 @@ export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
             options={people}
             getOptionLabel={option => option.name}
             value={selectedPersonSrc}
+            inputValue={sourcePersonText}
+            onInputChange={(_, value) => setSourcePersonText(value)}
             onChange={(_, person) => person && setSelectedPersonSrc(person)}
             style={{ width: '35%' }}
             renderInput={params => (
@@ -92,6 +112,7 @@ export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
                 size="small"
               />
             )}
+            disabled={disabled}
           />
           <section className="grow flex center">
             <Typography variant="body2">and</Typography>
@@ -100,6 +121,8 @@ export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
             options={people}
             getOptionLabel={option => option.name}
             value={selectedPersonDest}
+            inputValue={destPersonText}
+            onInputChange={(_, value) => setDestPersonText(value)}
             onChange={(_, person) => person && setSelectedPersonDest(person)}
             style={{ width: '35%' }}
             renderInput={params => (
@@ -112,9 +135,15 @@ export const Search: React.FC<SearchProps> = ({ people }): JSX.Element => {
                 size="small"
               />
             )}
+            disabled={disabled}
           />
           <section className="flex a-bottom" style={{ marginLeft: '1rem' }}>
-            <Button variant="contained" color="secondary" type="submit">
+            <Button
+              variant="contained"
+              color="secondary"
+              type="submit"
+              disabled={disabled}
+            >
               Search
             </Button>
           </section>

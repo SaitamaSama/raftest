@@ -4,6 +4,7 @@ import { Panel } from '../../common/components/panel';
 import { DispatchedAction } from '../../root/util/store-manager';
 import * as config from '../../../config.json';
 import { Person } from '../../../../../backend/src/entities/person';
+import { useSnackbar } from 'notistack';
 
 export interface AddPersonProps {
   store: Array<Person>;
@@ -15,8 +16,23 @@ async function save(
   setName: React.Dispatch<React.SetStateAction<string>>,
   store: Array<Person>,
   addPerson: DispatchedAction<Array<Person>, Person>,
+  enqueueSnackbar: Function,
+  closeSnackbar: Function,
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> {
+  if (name.trim().length === 0) {
+    enqueueSnackbar('Name cannot be empty.');
+    return;
+  }
+  const saveSnackBar = enqueueSnackbar('Saving...', {
+    persist: true,
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'center',
+    },
+  });
   try {
+    setDisabled(true);
     const request = await fetch(`${config.API_HOST}/person`, {
       method: 'POST',
       headers: {
@@ -30,7 +46,12 @@ async function save(
     addPerson(store, response.person);
     setName('');
   } catch (error) {
-    console.error(error);
+    enqueueSnackbar(`Error: ${JSON.stringify(error)}`, {
+      variant: 'error',
+    });
+  } finally {
+    setDisabled(false);
+    closeSnackbar(saveSnackBar);
   }
 }
 
@@ -39,6 +60,9 @@ export const AddPerson: React.FC<AddPersonProps> = ({
   addPerson,
 }): JSX.Element => {
   const [name, setName] = React.useState<string>('');
+  const [disabled, setDisabled] = React.useState<boolean>(false);
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   return (
     <Panel>
@@ -49,7 +73,15 @@ export const AddPerson: React.FC<AddPersonProps> = ({
         className="flex"
         onSubmit={ev => {
           ev.preventDefault();
-          save(name, setName, store, addPerson);
+          save(
+            name,
+            setName,
+            store,
+            addPerson,
+            enqueueSnackbar,
+            closeSnackbar,
+            setDisabled,
+          );
         }}
       >
         <TextField
@@ -59,10 +91,16 @@ export const AddPerson: React.FC<AddPersonProps> = ({
           style={{ width: '35%' }}
           value={name}
           onChange={ev => setName(ev.target.value)}
+          disabled={disabled}
         />
         <div className="grow" />
         <section className="flex a-bottom">
-          <Button variant="outlined" color="primary" type="submit">
+          <Button
+            variant="outlined"
+            color="primary"
+            type="submit"
+            disabled={disabled}
+          >
             Save
           </Button>
         </section>
