@@ -9,3 +9,5 @@ find relations between two distinct people.
 To scale the application, there are a couple of changes I would make:
 1. Move the API to a lambda and use it under the API gateway to get a managed API service.
 2. Instead of relying on application level graphs, I would store the data points in a Graph DB, for which AWS provides Neptune.
+
+![screenshot](app-screenshot.png)
